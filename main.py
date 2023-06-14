@@ -1,4 +1,3 @@
-import sys
 import time
 import retry
 import flask
@@ -6,49 +5,44 @@ import random
 import webview
 import threading
 
-file     = sys.argv[1]
-first    = True
-window   = None
-current  = None
-previous = None
+previous = '<body><strong>Please select a file!</strong></body>'
+closed = False
+
+on_closed = lambda: globals().update({'closed': True})
 
 def update():
     global previous
+    file = window.create_file_dialog(file_types=['HyperText Markup Language (*.html)'])[0]
     while 1:
-        if not window and first:
-            continue
-        elif not first:
+        if closed:
             break
 
-        source = open(file, 'r', encoding='UTF-8')
-        content = source.read()
+        with open(file, 'r', encoding='UTF-8') as source:
+            content = source.read()
         source.close()
-        
+            
         if previous != content:
             previous = content
             window.evaluate_js('window.location.reload()')
 
         time.sleep(0.5)
-    return sys.exit(0)
+    return exit(0)
         
 @retry.retry()
 def deploy():
-    def run():
-        global port
-        port = random.randint(8000, 19000)
+    global port
+    app = flask.Flask(__name__)
+        
+    index = app.route('/')
+    index(lambda: previous)
+        
+    port = random.randint(8000, 19000)
+    return app.run('0.0.0.0', port)
 
-        app = flask.Flask(__name__)
-        
-        index = app.route('/')
-        index(lambda: previous)
-        
-        return app.run('0.0.0.0', port)
-    
-    thread = threading.Thread(target=run, daemon=True)
-    return thread.start()
-deploy() 
+thread = threading.Thread(target=deploy, daemon=True)
+thread.start()
 
 window = webview.create_window('Live HTML Viewer', url=f'http://localhost:{port}')
-window.events.closed += lambda: globals().update({'window': None, 'first': False})
+window.events.closed += on_closed
 
-webview.start(func=update)
+webview.start(update)
