@@ -6,3 +6,6 @@ pip install -r requirements.txt
 python main.py <html source file>
 pause
 ```
+
+# TODOS
+- [ ] Improve performance.
