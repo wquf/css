@@ -20,7 +20,7 @@ def update():
         elif not first:
             break
 
-        soruce = open(file, 'r', encoding='UTF-8')
+        source = open(file, 'r', encoding='UTF-8')
         content = source.read()
         source.close()
         
