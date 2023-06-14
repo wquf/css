@@ -10,8 +10,6 @@ import threading
 first = True
 window = None
 previous = None
-try: sys.argv[1] = eval(sys.argv[1])
-except: pass
 file = os.path.abspath(sys.argv[1])
 
 def get():
