@@ -1,11 +1,11 @@
-import webview
-import flask
-import sys
-import threading
-import retry
-import random
-import time
 import os
+import sys
+import time
+import retry
+import flask
+import random
+import webview
+import threading
 
 first = True
 window = None
