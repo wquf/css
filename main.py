@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 import retry
@@ -10,49 +9,42 @@ import threading
 first = True
 window = None
 previous = None
-file = os.path.abspath(sys.argv[1])
-
-def get():
-    with open(file, 'r', encoding='UTF-8') as source:
-        content = source.read()
-    source.close()
-    return content
+current = None
+file = sys.argv[1]
 
 def update():
     global previous
     while 1:
         if not window and first:
             continue
-        elif not window and not first:
+        elif not first:
             break
-        content = get()
+
+        with open(file, 'r', encoding='UTF-8') as source:
+            content = source.read()
+        source.close()
+
         if previous != content:
             previous = content
             window.evaluate_js('window.location.reload()')
-        time.sleep(0.1)
+
+        time.sleep(0.5)
     return sys.exit(0)
         
 @retry.retry()
 def deploy():
     def process():
-        global app
         global port
-        port = random.randint(8000, 65535)
-        
+        port = random.randint(8000, 19000)
+
         app = flask.Flask(__name__)
-        @app.route('/')
-        def _():
-            return get()
-        return app.run('0.0.0.0', port=port)
+        app.route('/')(lambda: previous)
+        return app.run('0.0.0.0', port)
+    
     thread = threading.Thread(target=process, daemon=True)
     return thread.start()
 
 deploy() 
-window = webview.create_window('HTML Previewer', url=f'http://localhost:{port}')
-def closed():
-    global window, first
-    window = None
-    first = False
-    return None
-window.events.closed += closed
+window = webview.create_window('Live HTML Viewer', url=f'http://localhost:{port}')
+window.events.closed += lambda: globals().update({'window': None, 'first': False})
 webview.start(func=update)
