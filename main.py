@@ -38,8 +38,10 @@ def deploy():
         port = random.randint(8000, 19000)
 
         app = flask.Flask(__name__)
+        
         index = app.route('/')
         index(lambda: previous)
+        
         return app.run('0.0.0.0', port)
     
     thread = threading.Thread(target=run, daemon=True)
