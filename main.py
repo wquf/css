@@ -46,7 +46,6 @@ def deploy():
     
     thread = threading.Thread(target=run, daemon=True)
     return thread.start()
-
 deploy() 
 
 window = webview.create_window('Live HTML Viewer', url=f'http://localhost:{port}')
