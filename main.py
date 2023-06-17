@@ -5,7 +5,7 @@ import random
 import webview
 import threading
 
-previous = '<body><strong>Please select a file!</strong></body>'
+previous = '<body><strong>파일을 선택해주세요!</strong></body>'
 closed = False
 
 on_closed = lambda: globals().update({'closed': True})
