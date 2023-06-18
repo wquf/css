@@ -1,2 +1,4 @@
-# 실시간으로 HTML 보여주는 프로그램
-- [ ] 성능 높이기
+# Live-HTML-Viewer
+- **Todos**
+- [ ] Increase the program's performance by far than now.
+- [ ] Make the window changes its title to the defined title in the HTML file.
